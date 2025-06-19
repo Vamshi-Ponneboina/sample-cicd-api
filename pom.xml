@@ -33,7 +33,7 @@
                     <classifier>mule-application</classifier>
                     <cloudhub2Deployment>
                         <uri>https://anypoint.mulesoft.com</uri>
-                        <provider>MC</provider>
+                        <provider>CH2</provider>
                         <environment>Sandbox</environment>
                         <target>Cloudhub-US-East-2</target>
                         <server>Repository</server>
