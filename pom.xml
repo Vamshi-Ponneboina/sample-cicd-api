@@ -4,7 +4,7 @@
 
 	<groupId>c085b9ab-fa90-4e02-b94b-cb7859f71a3f</groupId>
 	<artifactId>sample-cicd-api</artifactId>
-	<version>1.0.14</version>
+	<version>1.0.15</version>
 	<packaging>mule-application</packaging>
 
 	<name>sample-cicd-api</name>
@@ -14,7 +14,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<app.runtime>4.9.0</app.runtime>
-		<mule.maven.plugin.version>4.3.0</mule.maven.plugin.version>
+		<mule.maven.plugin.version>4.4.0</mule.maven.plugin.version>
 	</properties>
 
 	<build>
