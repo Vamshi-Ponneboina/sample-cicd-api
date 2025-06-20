@@ -4,7 +4,7 @@
 
 	<groupId>c085b9ab-fa90-4e02-b94b-cb7859f71a3f</groupId>
 	<artifactId>sample-cicd-api</artifactId>
-	<version>1.0.18</version>
+	<version>1.0.19</version>
 	<packaging>mule-application</packaging>
 
 	<name>sample-cicd-api</name>
@@ -14,7 +14,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<app.runtime>4.9.0</app.runtime>
-		<mule.maven.plugin.version>4.1.1</mule.maven.plugin.version>
+		<mule.maven.plugin.version>4.3.0</mule.maven.plugin.version>
 	</properties>
 
 	<build>
@@ -30,29 +30,33 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-                    <classifier>mule-application</classifier>
-                    <cloudhub2Deployment>
-                        <uri>https://anypoint.mulesoft.com</uri>
-                        <provider>MC</provider>
-                        <environment>Sandbox</environment>
-                        <target>Cloudhub-US-East-2</target>
-                        <server>Repository</server>
-                        <applicationName>${project.artifactId}</applicationName>
-                        <releaseChannel>NONE</releaseChannel>
-                        <replicas>1</replicas>
-                        <vCores>0.1</vCores>
-                        <deploymentSettings>
-                            <generateDefaultPublicUrl>true</generateDefaultPublicUrl>
-                        </deploymentSettings>
-                    </cloudhub2Deployment>
-                </configuration>
+	<cloudhub2Deployment>
+		<uri>https://anypoint.mulesoft.com</uri>
+		<provider>MC</provider>
+		<environment>Sandbox</environment>
+		<target>Cloudhub-US-East-2</target>
+		<muleVersion>4.4.0</muleVersion>
+		<server>ca.anypoint.credentials</server>
+		<applicationName>${artifactId}</applicationName>
+		<replicas>1</replicas>
+		<vCores>0.1</vCores>
+		<skipDeploymentVerification>${skipDeploymentVerification}</skipDeploymentVerification>
+		<integrations>
+			<services>
+				<objectStoreV2>
+					<enabled>true</enabled>
+				</objectStoreV2>
+			</services>
+		</integrations>
+	</cloudhub2Deployment>
+</configuration>
 			</plugin>
 		</plugins>
 	</build>
 	
 	<distributionManagement>
         <repository>
-            <id>Repository</id>
+            <id>ca.anypoint.credentials</id>
             <name>Corporate Repository</name>
             <url>https://maven.anypoint.mulesoft.com/api/v3/organizations/${project.groupId}/maven</url>
             <layout>default</layout>

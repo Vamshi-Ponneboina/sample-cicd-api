@@ -7,7 +7,7 @@
 
   <servers>
     <server>
-      <id>Repository</id>
+      <id>ca.anypoint.credentials</id>
       <username>~~~Client~~~</username>
       <password>${client.id}~?~${client.secret}</password>
     </server>
