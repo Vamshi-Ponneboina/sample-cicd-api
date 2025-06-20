@@ -4,7 +4,7 @@
 
 	<groupId>c085b9ab-fa90-4e02-b94b-cb7859f71a3f</groupId>
 	<artifactId>sample-cicd-api</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 	<packaging>mule-application</packaging>
 
 	<name>sample-cicd-api</name>
@@ -33,12 +33,12 @@
                     <classifier>mule-application</classifier>
                     <cloudhub2Deployment>
                         <uri>https://anypoint.mulesoft.com</uri>
-                        <provider>CH2</provider>
+                        <provider>MC</provider>
                         <environment>Sandbox</environment>
                         <target>Cloudhub-US-East-2</target>
                         <server>Repository</server>
                         <applicationName>${project.artifactId}</applicationName>
-                        <releaseChannel>NONE</releaseChannel>
+                        <releaseChannel>LTS</releaseChannel>
                         <replicas>1</replicas>
                         <vCores>0.1</vCores>
                         <deploymentSettings>
