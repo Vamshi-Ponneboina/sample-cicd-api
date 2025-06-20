@@ -1,24 +1,28 @@
-# This workflow will build a MuleSoft project and deploy to CloudHub
-
-name: Build and Deploy to Sandbox
+name: MuleSoft CI/CD Pipeline
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
-    
+
+env:
+  MAVEN_OPTS: -Dhttps.protocols=TLSv1.2
+  MAVEN_CLI_OPTS: --batch-mode --errors --fail-at-end --show-version
+  EXCHANGE_REPO_URL: https://maven.anypoint.mulesoft.com/api/v3/maven
+
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     env:
       CA_CLIENT_ID: ${{ secrets.CA_CLIENT_ID }}
       CA_CLIENT_SECRET: ${{ secrets.CA_CLIENT_SECRET }}
     
     steps:
-    
-    - uses: actions/checkout@v3
-    
-    - uses: actions/cache@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -30,87 +34,43 @@ jobs:
       with:
         java-version: 11
         distribution: 'zulu'
+        cache: 'maven'
     
-    - name: Print effective-settings (optional)
-      run: mvn help:effective-settings
-    
-    - name: Build with Maven
-      run: mvn -B package -s .maven/settings.xml
-    
-    - name: Stamp artifact file name with commit hash
+    - name: Validate settings.xml
       run: |
-        artifactName1=$(ls target/*.jar | head -1)
-        commitHash=$(git rev-parse --short "$GITHUB_SHA")
-        artifactName2=$(ls target/*.jar | head -1 | sed "s/.jar/-$commitHash.jar/g")
-        mv $artifactName1 $artifactName2
-    
-    - name: Upload artifact 
-      uses: actions/upload-artifact@master
-      with:
-          name: artifacts
-          path: target/*.jar
-          
-          
-          
-  upload:
-    needs: build
-    runs-on: ubuntu-latest
-    env:
-      CA_CLIENT_ID: ${{ secrets.CA_CLIENT_ID }}
-      CA_CLIENT_SECRET: ${{ secrets.CA_CLIENT_SECRET }}
-
-    steps:    
-    
-    - uses: actions/checkout@v3
-    
-    - uses: actions/cache@v3
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-    
-    - uses: actions/download-artifact@master
-      with:
-        name: artifacts
-    
-    - name: Upload to Exchange
-      run: |
-        artifactName=$(ls *.jar | head -1)
-        mvn deploy \
-         -s .maven/settings.xml \
-         -Dmule.artifact=$artifactName \
-       
-    
- 
+        echo "Validating Maven settings..."
+        if [ ! -f .maven/settings.xml ]; then
+          echo "Error: settings.xml not found in .maven directory"
+          exit 1
+        fi
         
-  deploy:
-    needs: upload
-    runs-on: ubuntu-latest
-    env:
-      CA_CLIENT_ID: ${{ secrets.CA_CLIENT_ID }}
-      CA_CLIENT_SECRET: ${{ secrets.CA_CLIENT_SECRET }}
-
-    steps:    
-    
-    - uses: actions/checkout@v3
-    
-    - uses: actions/cache@v3
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-    
-    - uses: actions/download-artifact@master
-      with:
-        name: artifacts
-    
-    - name: Deploy to Sandbox
+    - name: Build and deploy to Exchange
       run: |
-        artifactName=$(ls *.jar | head -1)
-        mvn deploy -DmuleDeploy \
-         -Dmule.artifact=$artifactName \
-         -s .maven/settings.xml \
-         -DskipTests \
-         -DskipDeploymentVerification="true"
+        echo "Building Mule application..."
+        mvn $MAVEN_CLI_OPTS clean package \
+          -s .maven/settings.xml \
+          -DskipTests
+        
+        echo "Deploying to Exchange..."
+        ARTIFACT_PATH=$(ls target/*.jar | head -1)
+        mvn $MAVEN_CLI_OPTS deploy \
+          -s .maven/settings.xml \
+          -Dmule.artifact=$ARTIFACT_PATH \
+          -Dexchange.repository=anypoint-exchange-v3 \
+          -Dexchange.serverId=anypoint-exchange-v3
+        
+    - name: Deploy to CloudHub
+      run: |
+        echo "Deploying to CloudHub Sandbox..."
+        mvn $MAVEN_CLI_OPTS mule:deploy \
+          -s .maven/settings.xml \
+          -DmuleDeploy \
+          -DskipTests \
+          -DskipDeploymentVerification="true" \
+          -Ddeployment.environment="sandbox"
+    
+    - name: Upload artifact for reference
+      uses: actions/upload-artifact@v4
+      with:
+        name: mule-application
+        path: target/*.jar
