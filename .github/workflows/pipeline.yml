@@ -36,6 +36,4 @@ jobs:
           mvn mule:deploy --settings .maven/settings.xml -DskipMunitTests \
             -Ddeployment.target=CH2 \
             -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
-            -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}" \
-            -Danypoint.platform.client_id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
-            -Danypoint.platform.client_secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
+            -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}" 
