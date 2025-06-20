@@ -27,20 +27,12 @@ jobs:
 
       - name: Publish to Exchange
         run: |
-          mvn deploy \
-            --settings .maven/settings.xml \
-            -DskipMunitTests \
-            -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
-            -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
-
+          mvn deploy --settings .maven/settings.xml -DskipMunitTests \
+          -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
+          -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
       - name: Deploy to CloudHub 2.0
         run: |
-          mvn deploy \
-            --settings .maven/settings.xml \
-            -DskipMunitTests \
-            -DmuleDeploy \
-            -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
-            -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
-            -Dcloudhub.businessGroup="c085b9ab-fa90-4e02-b94b-cb7859f71a3f" \
-            -Dcloudhub.environmentId="fe9aeb36-11a1-4bc9-9899-e29f83032f46" \
+          mvn deploy --settings .maven/settings.xml -DskipMunitTests -DmuleDeploy \
+          -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
+          -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
             
