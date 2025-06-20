@@ -41,3 +41,4 @@ jobs:
             -DmuleDeploy \
             -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
             -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
+            -X -e -Dorg.slf4j.simpleLogger.log.org.mule.tools=DEBUG
