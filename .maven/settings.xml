@@ -1,12 +1,10 @@
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <settings>
-
-  <servers>
-    <server>
-      <id>Repository</id>
-      <username>~~~Client~~~</username>
-      <password>${client.id}~?~${client.secret}</password>
-    </server>
-  </servers>
-
+    <servers>
+        <server>
+            <id>Repository</id>
+            <username>~~~Client~~~</username>
+            <password>client-id~?~client-secret</password>
+        </server>
+    </servers>
 </settings>
